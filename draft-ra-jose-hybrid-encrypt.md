@@ -162,7 +162,7 @@ registry:
 - Description: Hybrid Key Exchange
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section TODO of this document (TBD)
+- Specification Document(s): Section 6 of this document (TBD)
 
 The following has NOT YET been added to the "JSON Web Key Parameters"
 registry:
