@@ -1,6 +1,6 @@
 ---
-title: "Hybrid key exchange in JOSE and CBOR"
-abbrev: "Hybrid key exchange in JOSE and CBOR"
+title: "Hybrid key exchange in JOSE and COSE"
+abbrev: "Hybrid key exchange in JOSE and COSE"
 category: std
 
 docname: draft-ra-jose-hybrid-encrypt
@@ -14,6 +14,8 @@ workgroup: "JOSE"
 keyword:
  - PQC
  - JOSE
+ - Hybrid
+ - COSE
  
 
 venue:
@@ -59,9 +61,9 @@ informative:
 --- abstract
 
 Hybrid key exchange refers to using multiple key exchange algorithms simultaneously and combining the result with the goal of providing
-security even if all but one of the component algorithms is broken. It is motivated by transition to post-quantum cryptography. 
+security  as long as at least one of the component algorithms is not broken. It is motivated by transition to post-quantum cryptography. 
 This document provides a construction for hybrid key exchange in JOSE. It defines the use of traditional and PQC algorithms, 
-a hybrid post-quantum KEM, for JOSE. 
+a hybrid post-quantum KEM, for JOSE and COSE. 
 
 
 
@@ -69,14 +71,18 @@ a hybrid post-quantum KEM, for JOSE.
 
 # Introduction
 
-This document gives a construction for hybrid key exchange in JOSE. The overall design approach is a simple, "concatenation"-based approach to use a “hybrid” shared secret.
+The migration to PQC is unique in the history of modern digital cryptography in that neither the traditional algorithms nor the post-quantum algorithms are fully trusted to protect data for the required data lifetimes. The traditional algorithms, such as RSA and elliptic curve, will fall to quantum cryptalanysis, while the post-quantum algorithms face uncertainty about the underlying mathematics, compliance issues, unknown vulnerabilities, hardware and software implementations that have not had sufficient maturing time to rule out classical cryptanalytic attacks and implementation bugs.
+
+During the transition from traditional to post-quantum algorithms, there is a desire or a requirement for protocols that use both algorithm types. {{?I-D.ietf-pquip-pqt-hybrid-terminology}} defines terminology for the Post-Quantum and Traditional Hybrid Schemes.
+
+This document gives a construction for hybrid key exchange in Javascript Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE). The overall design approach is a simple, "concatenation"-based approach to use a “hybrid” shared secret.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 This document makes use of the terms defined in {{?I-D.ietf-pquip-pqt-hybrid-terminology}}. For the purposes of this document, it is helpful to be able to divide cryptographic algorithms into two classes:
 
-"Traditional" algorithms:  An asymmetric cryptographic algorithm based on integer factorisation, finite field discrete logarithms or elliptic curve discrete logarithms. In the context of JOSE, examples of traditional key exchange algorithms include Elliptic Curve Diffie-Hellman Ephemeral Static {{?RFC6090}} {{?RFC8037}}. 
+"Traditional" algorithms:  An asymmetric cryptographic algorithm based on integer factorisation, finite field discrete logarithms or elliptic curve discrete logarithms. In the context of JOSE, examples of traditional key exchange algorithms include Elliptic Curve Diffie-Hellman Ephemeral Static {{?RFC6090}} {{?RFC8037}}. In the context of COSE, examples of traditional key exchange algorithms include Ephemeral-Static (ES) DH and Static-Static (SS) DH {{?RFC9052}}. 
 
 "Post-Quantum Algorithm":  An asymmetric cryptographic algorithm that is believed to be secure against attacks using quantum computers as well as classical computers. Examples of PQC key exchange algorithms include Kyber.
 
@@ -102,13 +108,15 @@ KEMs are typically used in cases where two parties, hereby refereed to as the "e
 
 Building a PQ/T hybrid KEM requires a secure function which combines the output of both component KEMs to form a single output.  Several IETF protocols are adding PQ/T hybrid KEM mechanisms as part of their overall post-quantum migration strategies, examples include TLS 1.3 {{?I-D.ietf-ietf-tls-hybrid-design}}, IKEv2 {{?RFC9370}}.
 
-The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE. 
+The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and CBOR. 
 
-The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. 
+The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE {{?RFC5652}} in Sections 8.5.4 and 8.5.5 define the Direct Key Agreement and Key Agreement with Key Wrap classes.
 
 # KEM Combiner
 
-The specification uses the KEM combiner function defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 1. The fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". 
+The specification uses the KEM combiner function defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
+
+The KDF and Hash functions will be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, The fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". 
 
 # KEM PQC Algorithms
 
@@ -120,8 +128,8 @@ NIST announced as well that they will be [opening a fourth round](https://csrc.n
 
 ## Kyber
 
-Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at three security levels: Kyber512, Kyber768 and
-Kyber1024. Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
+Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at two security levels: Kyber512 and Kyber768
+Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
 
 # Hybrid Key Representation with JOSE
 
@@ -149,7 +157,7 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
                                  Table 1
                       
 
-* The parameter "x" MUST be present and contain the concatenatnated traditional and PQC public key encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "x" MUST be present and contain the concatenated traditional and PQC public key encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "d" MUST be present for private keys and contains the concatenated traditional and PQC private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
 # Hybrid Key Representation with COSE
@@ -187,7 +195,7 @@ The approach taken here matches the work done to support secp256k1 in JOSE and C
 
 # Security Considerations
 
-Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiners}} apply here. The nominal security strengths of X25519 and X448 are ~126 and ~223 bits.  Therefore, using 256-bit symmetric encryption (especially key wrapping and encryption) with X448 is RECOMMENDED.
+Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiners}} apply here. 
 
 # IANA Considerations
 
