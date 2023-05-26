@@ -1,6 +1,6 @@
 ---
-title: "Hybrid key exchange in JOSE"
-abbrev: "Hybrid key exchange in JOSE"
+title: "Hybrid key exchange in JOSE and CBOR"
+abbrev: "Hybrid key exchange in JOSE and CBOR"
 category: std
 
 docname: draft-ra-jose-hybrid-encrypt
@@ -19,7 +19,7 @@ keyword:
 venue:
   group: "jose"
   type: "Working Group"
-  mail: "pquip@ietf.org"
+  mail: "jose@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/jose/"
   
 
@@ -123,7 +123,7 @@ NIST announced as well that they will be [opening a fourth round](https://csrc.n
 Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at three security levels: Kyber512, Kyber768 and
 Kyber1024. Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
 
-# Hybrid Key Representation
+# Hybrid Key Representation with JOSE
 
 A new key type (kty) value "HYBRID" is defined for expressing the cryptographic keys for PQ/T Hybrid KEM in JSON Web Key (JWK) form, the following rules apply:
 
@@ -146,14 +146,52 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               |                      |                                   |
               +==========================================================+
 
-* The parameter "x" MUST be present and contain the concatenatnated traditional and PQC public key encoded using the base64url [RFC4648] encoding.
+                                 Table 1
+                      
+
+* The parameter "x" MUST be present and contain the concatenatnated traditional and PQC public key encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "d" MUST be present for private keys and contains the concatenated traditional and PQC private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+
+# Hybrid Key Representation with COSE
+
+The approach taken here matches the work done to support secp256k1 in JOSE and COSE in {{?RFC8812}}. The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
+
+        +==============+=======+====================+===============================+
+        | Name                 | Value | Description                 | Recommended  |
+        +==============+=======+====================+=============--------==========+
+        | x25519_kyber512      | TBD   | Curve25519 elliptic curve + | No           |
+        |                      |       | Kyber512 paraneter          |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+        | secp384r1_kyber512   | TBD   | P-384 + Kyber512 paraneter  | No           |
+        |                      |       |                             |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+        | x25519_kyber768      | TBD   | Curve25519 elliptic curve   | No           |
+        |                      |       | Kyber768 paraneter          |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+        | secp256r1_kyber768   | TBD   | P-256 + Kyber512 paraneter  | No           |
+        |                      |       |                             |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+
+                                       Table 2
+
+   The following tables map terms between JOSE and COSE for key types.
+
+        +==============+=======+====================+===============================+
+        | Name                 | Value | Description                 | Recommended  |
+        +==============+=======+====================+=============--------==========+
+        | HYBRID               | TBD   | kty for PQ/T Hybrid KEM     | No           |
+        |                      |       | Kyber512 paraneter          |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+
+                                       Table 3
 
 # Security Considerations
 
 Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiners}} apply here. The nominal security strengths of X25519 and X448 are ~126 and ~223 bits.  Therefore, using 256-bit symmetric encryption (especially key wrapping and encryption) with X448 is RECOMMENDED.
 
 # IANA Considerations
+
+## JOSE
 
 The following has NOT YET been added to the "JSON Web Key Types"
 registry:
@@ -163,9 +201,6 @@ registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-
-The following has NOT YET been added to the "JSON Web Key Parameters"
-registry:
 
 The following has NOT YET been added to the "JSON Web Key Parameters"
 registry:
@@ -230,6 +265,10 @@ Encryption Algorithms" registry:
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
 - Algorithm Analysis 
+
+## COSE
+
+TODO
 
 # Acknowledgments
 {: numbered="false"}
