@@ -106,7 +106,7 @@ KEMs are typically used in cases where two parties, hereby refereed to as the "e
   
 # Construction
 
-Building a PQ/T hybrid KEM requires a secure function which combines the output of both component KEMs to form a single output.  Several IETF protocols are adding PQ/T hybrid KEM mechanisms as part of their overall post-quantum migration strategies, examples include TLS 1.3 {{?I-D.ietf-ietf-tls-hybrid-design}}, IKEv2 {{?RFC9370}}.
+Building a PQ/T hybrid KEM requires a secure function which combines the output of both component KEMs to form a single output.  Several IETF protocols are adding PQ/T hybrid KEM mechanisms as part of their overall post-quantum migration strategies, examples include TLS 1.3 {{?I-D.ietf-tls-hybrid-design}}, IKEv2 {{?RFC9370}}.
 
 The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and CBOR. 
 
@@ -157,16 +157,16 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
                                  Table 1
                       
 * The parameter "pq-kem" MUST be present and set to the PQC KEM algorithm.
-* The parameter "pq-pk" MUST be present and and contain the PQC public key encoded using the base64url {{?RFC4648}} encoding.
-* The parameter "pq-sk" MUST be present and and PQC private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
-* The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used with the key (from the "JSON Web Elliptic Curve" registry).
+* The parameter "pq-pk" MUST be present and and contain the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "pq-sk" MUST be present and and PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+* The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used (from the "JSON Web Elliptic Curve" registry).
 * The parameter "x" MUST be present and contains the x coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
 * The parameter "d" MUST be present and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
 ## HYBRID {#hybrid}
 
-   The following key subtypes are defined here for purpose of "PQ/T Hybrid KEM in JSON Web Key (JWK) form" (Hybrid):
+   The following key subtypes are defined here for purpose of "PQ/T Hybrid KEM in JSON Web Key (JWK) form" (HYBRID):
 
       "pq-kem"          PQC KEM Applied
       Kyber512            Kyber512          
@@ -198,8 +198,8 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 
      {"kty":"HYBRID",
       "pq-kem": "kyber512",
-      "pq-pk":"bob_public_key",
-      "d":"bob_private_key"
+      "pq-pk":"bob_kyber_public_key",
+      "pq-sk":"bob_kyber_private_key"
       "crv":"P-256",
       "x":"bob_public_key_x",
       "y":"bob_public_key_y",
@@ -231,13 +231,13 @@ The approach taken here matches the work done to support secp256k1 in JOSE and C
         | x25519_kyber512      | TBD   | Curve25519 elliptic curve + | No           |
         |                      |       | Kyber512 paraneter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp384r1_kyber512   | TBD   | P-384 + Kyber512 paraneter  | No           |
+        | secp384r1_kyber768   | TBD   | P-384 + Kyber768 paraneter  | No           |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
         | x25519_kyber768      | TBD   | Curve25519 elliptic curve   | No           |
         |                      |       | Kyber768 paraneter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp256r1_kyber768   | TBD   | P-256 + Kyber512 paraneter  | No           |
+        | secp256r1_kyber512   | TBD   | P-256 + Kyber512 paraneter  | No           |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
@@ -273,6 +273,13 @@ registry:
 
 The following has to be added to the "JSON Web Key Parameters"
 registry:
+
+- Parameter Name: "crv"
+- Parameter Description: The EC used
+- Parameter Information Class: Public
+- Used with "kty" Value(s): "HYBRID"
+- Change Controller: IESG
+- Specification Document(s): Section 2 of RFC 8037
 
 - Parameter Name: "d"
 - Parameter Description: The private key
@@ -367,7 +374,7 @@ Encryption Algorithms" registry:
    after review by the Designated Experts, with the new specification
    defining the revised implementation requirements level.
 
-###  Registration Template
+####  Registration Template
 
    PQC KEM name:
       The name requested (e.g., "Kyber512").  Because a core goal of this
@@ -378,7 +385,7 @@ Encryption Algorithms" registry:
       case-insensitive manner unless the Designated Experts state that
       there is a compelling reason to allow an exception.
 
-   Curve Description:
+   PQC KEM Description:
       Brief description of the PQC KEM (e.g., "Kyber512").
 
    JOSE Implementation Requirements:
@@ -401,7 +408,7 @@ Encryption Algorithms" registry:
       the documents.  An indication of the relevant sections may also be
       included but is not required.
 
-###  Initial Registry Contents
+####  Initial Registry Contents
 
 - PQC KEM name: "Kyber512"
 - PQC KEM Description: Kyber512
