@@ -112,7 +112,7 @@ The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulation
 
 The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE {{?RFC5652}} in Sections 8.5.4 and 8.5.5 define the Direct Key Agreement and Key Agreement with Key Wrap classes.
 
-# KEM Combiner
+# KEM Combiner {#kem-combiner}
 
 The specification uses the KEM combiner function defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
 
@@ -144,21 +144,82 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               | x25519_kyber512      | Curve25519 elliptic curve +       |
               |                      | Kyber512 paraneter                |
               +========+=================================================+
-              | secp384r1_kyber512   | P-384 + Kyber512 paraneter        |
+              | secp384r1_kyber768   | P-384 + Kyber768 paraneter        |
               |                      |                                   |
               +========+=================================================+
               | x25519_kyber768      | Curve25519 elliptic curve +       |
               |                      | Kyber768 paraneter                |
               +========+=================================================+
-              | secp256r1_kyber768   | P-256 +  Kyber512 paraneter       |
+              | secp256r1_kyber512   | P-256 +  Kyber512 paraneter       |
               |                      |                                   |
               +==========================================================+
 
                                  Table 1
                       
+* The parameter "pq-kem" MUST be present and set to the PQC KEM algorithm.
+* The parameter "pq-pk" MUST be present and and contain the PQC public key encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "pq-sk" MUST be present and and PQC private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+* The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used with the key (from the "JSON Web Elliptic Curve" registry).
+* The parameter "x" MUST be present and contains the x coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
+* The parameter "d" MUST be present and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
-* The parameter "x" MUST be present and contain the concatenated traditional and PQC public key encoded using the base64url {{?RFC4648}} encoding.
-* The parameter "d" MUST be present for private keys and contains the concatenated traditional and PQC private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+## HYBRID {#hybrid}
+
+   The following key subtypes are defined here for purpose of "PQ/T Hybrid KEM in JSON Web Key (JWK) form" (Hybrid):
+
+      "pq-kem"          PQC KEM Applied
+      Kyber512            Kyber512          
+      Kyber768            Kyber768
+
+## Example Hybrid Key Agreement Computation
+
+   This example uses Hybrid Key Agreement and the KEM Combiner to derive
+   the CEK in the manner described in {{kem-combiner}}.  In this example, the
+   Hybrid Direct Key Agreement mode ("alg" value "HYBRID") is used to
+   produce an agreed-upon key for AES GCM with a 128-bit key ("enc"
+   value "A128GCM").
+
+   In this example, a producer Alice is encrypting content to a consumer
+   Bob.  The producer (Alice) generates an ephemeral key for the key
+   agreement computation.  Alice's ephemeral key (in JWK format) used
+   for the key agreement computation in this example (including the
+   private part) is:
+
+     {"kty":"EC",
+      "crv":"P-256",    
+      "x":"alice_eph_public_key_x",
+      "y":"alice_eph_public_key_y",
+      "d":"alice_eph_private_key"
+     }
+
+   The consumer's (Bob's) key (in JWK format) used for the key agreement
+   computation in this example (including the private part) is:
+
+     {"kty":"HYBRID",
+      "pq-kem": "kyber512",
+      "pq-pk":"bob_public_key",
+      "d":"bob_private_key"
+      "crv":"P-256",
+      "x":"bob_public_key_x",
+      "y":"bob_public_key_y",
+      "d":"bob_private_key"
+     }
+
+   Header Parameter values used in this example are as follows.
+
+     {"alg":"secp256r1_kyber512",
+      "enc":"A128GCM",
+      "apu":"QWxpY2U",  // base64url encoding of the UTF-8 string "Alice"
+      "apv":"Qm9i",    // base64url encoding of the UTF-8 string "Bob"
+      "epk":
+       {"kty":"EC",
+        "crv":"P-256",
+        "x":"alice_eph_public_key_x",
+        "y":"alice_eph_public_key_y",
+       }
+     }
+   
 
 # Hybrid Key Representation with COSE
 
@@ -201,7 +262,7 @@ Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiner
 
 ## JOSE
 
-The following has NOT YET been added to the "JSON Web Key Types"
+The following has to be been added to the "JSON Web Key Types"
 registry:
 
 - Name: "HYBRID"
@@ -210,7 +271,7 @@ registry:
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
 
-The following has NOT YET been added to the "JSON Web Key Parameters"
+The following has to be added to the "JSON Web Key Parameters"
 registry:
 
 - Parameter Name: "d"
@@ -220,17 +281,42 @@ registry:
 - Change Controller: IESG
 - Specification Document(s): Section 2 of RFC 8037
 
-The following has NOT YET been added to the "JSON Web Key Parameters"
-registry:
-
 - Parameter Name: "x"
-- Parameter Description: The public key
+- Parameter Description: x coordinate for the public key
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
 - Specification Document(s): Section 2 of RFC 8037
 
-The following has NOT YET been added to the "JSON Web Signature and
+- Parameter Name: "y"
+- Parameter Description: y coordinate for the public key
+- Parameter Information Class: Public
+- Used with "kty" Value(s): "HYBRID"
+- Change Controller: IESG
+- Specification Document(s): Section 2 of RFC 8037
+
+- Parameter Name: "pq-kem"
+- Parameter Description: PQC KEM Algorithm 
+- Parameter Information Class: Public
+- Used with "kty" Value(s): "HYBRID"
+- Change Controller: IESG
+- Specification Document(s): Section 2 of RFC 8037
+
+- Parameter Name: "pq-pk"
+- Parameter Description: PQC KEM Public Key 
+- Parameter Information Class: Public
+- Used with "kty" Value(s): "HYBRID"
+- Change Controller: IESG
+- Specification Document(s): Section 2 of RFC 8037
+
+- Parameter Name: "pq-sk"
+- Parameter Description: PQC KEM Private Key
+- Parameter Information Class: Private
+- Used with "kty" Value(s): "HYBRID"
+- Change Controller: IESG
+- Specification Document(s): Section 2 of RFC 8037
+
+The following has to be added to the "JSON Web Signature and
 Encryption Algorithms" registry:
 
 - Algorithm Name: "x25519_kyber768"
@@ -241,19 +327,13 @@ Encryption Algorithms" registry:
 - Specification Document(s): Section 6 of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD)
 
-The following has NOT YET been added to the "JSON Web Signature and
-Encryption Algorithms" registry:
-
 - Algorithm Name: "secp384r1_kyber768"
 - Algorithm Description: P-384 + Kyber768 paraneter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis 
-
-The following has NOT YET been added to the "JSON Web Signature and
-Encryption Algorithms" registry:
+- Algorithm Analysis Documents(s): (TBD)
 
 - Algorithm Name: "x25519_kyber512"
 - Algorithm Description: Curve25519 elliptic curve + Kyber512 paraneter
@@ -261,10 +341,7 @@ Encryption Algorithms" registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis 
-
-The following has NOT YET been added to the "JSON Web Signature and
-Encryption Algorithms" registry:
+- Algorithm Analysis Documents(s): (TBD)
 
 - Algorithm Name: "secp256r1_kyber512"
 - Algorithm Description: P-256 + Kyber768 paraneter
@@ -272,7 +349,71 @@ Encryption Algorithms" registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis 
+- Algorithm Analysis Documents(s): (TBD)
+
+### JSON PQC KEM Registry
+
+   This section establishes the IANA "JSON PQC KEM"
+   registry for JWK "pq-kem" member values.  The registry records the PQC
+   KEM name, implementation requirements, and a reference to the
+   specification that defines it.  This specification registers the
+   PQC KEM algorithms defined in Section 6.2.1.1.
+
+   The implementation requirements of a PQC KEM may be changed over time
+   as the cryptographic landscape evolves, for instance, to change the
+   status of a PQC KEM to Deprecated or to change the status of a PQC KEM
+   from Optional to Recommended+ or Required.  Changes of implementation
+   requirements are only permitted on a Specification Required basis
+   after review by the Designated Experts, with the new specification
+   defining the revised implementation requirements level.
+
+###  Registration Template
+
+   PQC KEM name:
+      The name requested (e.g., "Kyber512").  Because a core goal of this
+      specification is for the resulting representations to be compact,
+      it is RECOMMENDED that the name be short -- not to exceed 12
+      characters without a compelling reason to do so.  This name is
+      case sensitive.  Names may not match other registered names in a
+      case-insensitive manner unless the Designated Experts state that
+      there is a compelling reason to allow an exception.
+
+   Curve Description:
+      Brief description of the PQC KEM (e.g., "Kyber512").
+
+   JOSE Implementation Requirements:
+      The PQC KEM implementation requirements for JWE, which must
+      be one the words Required, Recommended, Optional, Deprecated, or
+      Prohibited.  Optionally, the word can be followed by a "+" or "-".
+      The use of "+" indicates that the requirement strength is likely
+      to be increased in a future version of the specification.  The use
+      of "-" indicates that the requirement strength is likely to be
+      decreased in a future version of the specification.
+
+   Change Controller:
+      For Standards Track RFCs, list "IESG".  For others, give the name
+      of the responsible party.  Other details (e.g., postal address,
+      email address, home page URI) may also be included.
+
+   Specification Document(s):
+      Reference to the document or documents that specify the parameter,
+      preferably including URIs that can be used to retrieve copies of
+      the documents.  An indication of the relevant sections may also be
+      included but is not required.
+
+###  Initial Registry Contents
+
+- PQC KEM name: "Kyber512"
+- PQC KEM Description: Kyber512
+- JOSE Implementation Requirements: Required
+- Change Controller: IESG
+- Specification Document(s): {{hybrid}}
+
+- PQC KEM name: "Kyber768"
+- PQC KEM Description: Kyber768
+- JOSE Implementation Requirements: Required
+- Change Controller: IESG
+- Specification Document(s): {{hybrid}}
 
 ## COSE
 
