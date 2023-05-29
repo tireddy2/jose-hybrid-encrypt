@@ -228,16 +228,16 @@ The approach taken here matches the work done to support secp256k1 in JOSE and C
         +==============+=======+====================+===============================+
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
-        | x25519_kyber512      | TBD   | Curve25519 elliptic curve + | No           |
+        | x25519_kyber512      | TBD12 | Curve25519 elliptic curve + | TBD40        |
         |                      |       | Kyber512 paraneter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp384r1_kyber768   | TBD   | P-384 + Kyber768 paraneter  | No           |
+        | secp384r1_kyber768   | TBD11 | P-384 + Kyber768 paraneter  | TBD41        |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | x25519_kyber768      | TBD   | Curve25519 elliptic curve   | No           |
+        | x25519_kyber768      | TBD10 | Curve25519 elliptic curve   | TBD42        |
         |                      |       | Kyber768 paraneter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp256r1_kyber512   | TBD   | P-256 + Kyber512 paraneter  | No           |
+        | secp256r1_kyber512   | TBD13 | P-256 + Kyber512 paraneter  | TBD43        |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
@@ -248,7 +248,7 @@ The approach taken here matches the work done to support secp256k1 in JOSE and C
         +==============+=======+====================+===============================+
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
-        | HYBRID               | TBD   | kty for PQ/T Hybrid KEM     | No           |
+        | HYBRID               | TBD   | kty for PQ/T Hybrid KEM     | TBD44        |
         |                      |       | Kyber512 paraneter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
@@ -332,7 +332,7 @@ Encryption Algorithms" registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis Documents(s): (TBD)
+- Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp384r1_kyber768"
 - Algorithm Description: P-384 + Kyber768 paraneter
@@ -340,7 +340,7 @@ Encryption Algorithms" registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis Documents(s): (TBD)
+- Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber512"
 - Algorithm Description: Curve25519 elliptic curve + Kyber512 paraneter
@@ -348,15 +348,15 @@ Encryption Algorithms" registry:
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis Documents(s): (TBD)
+- Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp256r1_kyber512"
-- Algorithm Description: P-256 + Kyber768 paraneter
+- Algorithm Description: P-256 + Kyber512 paraneter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
 - Specification Document(s): Section 6 of this document (TBD)
-- Algorithm Analysis Documents(s): (TBD)
+- Algorithm Analysis Documents(s): (TBD20)
 
 ### JSON PQC KEM Registry
 
@@ -424,7 +424,163 @@ Encryption Algorithms" registry:
 
 ## COSE
 
-TODO
+The following has to be been added to the "COSE Key Types"
+registry:
+
+- Name: "HYBRID"
+- Value: TBD1
+- Description: Hybrid Key Exchange
+- Reference: This document (TBD)
+
+The following has to be added to the "COSE Key Type Parameters"
+registry:
+
+- Key Type: TBD1
+- Name: crv
+- Label : -1
+- CBOR Type: int / tstr 
+- Description: The EC used
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: d
+- Label : -4
+- CBOR Type: bstr
+- Description: The Private key
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: x
+- Label : -2
+- CBOR Type: bstr
+- Description: x coordinate for the public key
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: y
+- Label : -3
+- CBOR Type: bstr / bool 
+- Description:  y coordinate for the public key
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: pq-kem
+- Label : TBD2
+- CBOR Type: int / tstr 
+- Description: PQC KEM Algorithm
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: pq-pk
+- Label : TBD3
+- CBOR Type: bstr
+- Description: PQC KEM Public Key
+- Reference: This document (TBD)
+
+- Key Type: TBD1
+- Name: pq-sk
+- Label : TBD4
+- CBOR Type: bstr
+- Description:  PQC KEM Private Key
+- Reference: This document (TBD)
+
+The following has to be added to the "COSE Algorithms" registry:
+
+- Name: x25519_kyber768
+- Value: TBD10
+- Description: Curve25519 elliptic curve + Kyber768 paraneter
+- Reference: This document (TBD)
+- Recommended: TBD7
+
+- Name: secp384r1_kyber768
+- Value: TBD11
+- Description: P-384 + Kyber768 paraneter
+- Reference: This document (TBD)
+- Recommended: TBD7
+
+- Name: x25519_kyber512
+- Value: TBD12
+- Description: Curve25519 elliptic curve + Kyber512 paraneter
+- Reference: This document (TBD)
+- Recommended: TBD7
+
+- Name: secp256r1_kyber512
+- Value: TBD13
+- Description: Curve25519 elliptic curve + Kyber512 paraneter
+- Reference: This document (TBD)
+- Recommended: TBD7
+
+### COSE PQC KEM Registry
+
+   This section establishes the IANA "COSE PQC KEM"
+   registry for "pq-kem" member values.  The registry records the PQC
+   KEM name, implementation requirements, and a reference to the
+   specification that defines it.  This specification registers the
+   PQC KEM algorithms defined in Section 6.2.1.1.
+
+   The implementation requirements of a PQC KEM may be changed over time
+   as the cryptographic landscape evolves, for instance, to change the
+   status of a PQC KEM to Deprecated or to change the status of a PQC KEM
+   from Optional to Recommended+ or Required.  Changes of implementation
+   requirements are only permitted on a Specification Required basis
+   after review by the Designated Experts, with the new specification
+   defining the revised implementation requirements level.
+
+####  Registration Template
+
+   Name:
+      The name requested (e.g., "Kyber512").  Because a core goal of this
+      specification is for the resulting representations to be compact,
+      it is RECOMMENDED that the name be short -- not to exceed 12
+      characters without a compelling reason to do so.  This name is
+      case sensitive.  Names may not match other registered names in a
+      case-insensitive manner unless the Designated Experts state that
+      there is a compelling reason to allow an exception.
+   
+   Value: This is the value used for the label.  The label can be
+      either an integer or a string.  Registration in the table is based
+      on the value of the label requested.  Integer values between 1 and
+      255 and strings of length 1 are designated as "Standards Action".
+      Integer values from 256 to 65535 and strings of length 2 are
+      designated as "Specification Required".  Integer values of greater
+      than 65535 and strings of length greater than 2 are designated as
+      "Expert Review".  Integer values in the range -1 to -65536 are
+      "delegated to the COSE Header Algorithm Parameters registry".
+      Integer values less than -65536 are marked as private use.
+
+   Description:
+      Brief description of the PQC KEM (e.g., "Kyber512").
+
+   Change Controller:
+      For Standards Track RFCs, list "IESG".  For others, give the name
+      of the responsible party.  Other details (e.g., postal address,
+      email address, home page URI) may also be included.
+
+   Reference:
+      Reference to the document or documents that specify the parameter,
+      preferably including URIs that can be used to retrieve copies of
+      the documents.  An indication of the relevant sections may also be
+      included but is not required.
+   
+    Recommended:  Does the IETF have a consensus recommendation to use
+      the algorithm?  The legal values are 'Yes', 'No', and
+      'Deprecated'.
+
+####  Initial Registry Contents
+
+- Name: "Kyber512"
+- Value: TBD7
+- Description: Kyber512
+- Change Controller: IESG
+- Reference: This document (TBD)
+- Recommended: TBD50
+
+- Name: "Kyber768"
+- Value: TBD9
+- Description: Kyber768
+- Change Controller: IESG
+- Reference: This document (TBD)
+- Recommended: TBD51
 
 # Acknowledgments
 {: numbered="false"}
