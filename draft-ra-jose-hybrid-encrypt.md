@@ -62,7 +62,7 @@ informative:
 
 Hybrid key exchange refers to using multiple key exchange algorithms simultaneously and combining the result with the goal of providing
 security  as long as at least one of the component algorithms is not broken. It is motivated by transition to post-quantum cryptography. 
-This document provides a construction for hybrid key exchange in JOSE. It defines the use of traditional and PQC algorithms, 
+This document provides a construction for hybrid key exchange in JOSE and COSE. It defines the use of traditional and PQC algorithms, 
 a hybrid post-quantum KEM, for JOSE and COSE. 
 
 
@@ -108,15 +108,15 @@ KEMs are typically used in cases where two parties, hereby refereed to as the "e
 
 Building a PQ/T hybrid KEM requires a secure function which combines the output of both component KEMs to form a single output.  Several IETF protocols are adding PQ/T hybrid KEM mechanisms as part of their overall post-quantum migration strategies, examples include TLS 1.3 {{?I-D.ietf-tls-hybrid-design}}, IKEv2 {{?RFC9370}}.
 
-The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and CBOR. 
+The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and COSE. 
 
-The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE {{?RFC5652}} in Sections 8.5.4 and 8.5.5 define the Direct Key Agreement and Key Agreement with Key Wrap classes.
+The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC5652}} define the Direct Key Agreement and Key Agreement with Key Wrap classes.
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner function defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
 
-The KDF and Hash functions will be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, The fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". 
+In case of JOSE and COSE, the KDF and Hash functions will be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". 
 
 # KEM PQC Algorithms
 
@@ -131,7 +131,7 @@ NIST announced as well that they will be [opening a fourth round](https://csrc.n
 Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at two security levels: Kyber512 and Kyber768
 Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
 
-# Hybrid Key Representation with JOSE
+# Hybrid Key Representation with JOSE {#hybrid-kem}
 
 A new key type (kty) value "HYBRID" is defined for expressing the cryptographic keys for PQ/T Hybrid KEM in JSON Web Key (JWK) form, the following rules apply:
 
@@ -157,12 +157,12 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
                                  Table 1
                       
 * The parameter "pq-kem" MUST be present and set to the PQC KEM algorithm.
-* The parameter "pq-pk" MUST be present and and contain the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
-* The parameter "pq-sk" MUST be present and and PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+* The parameter "pq-pk" MUST be present and contains the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "pq-sk" MUST be present for private keys and contains the PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 * The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used (from the "JSON Web Elliptic Curve" registry).
 * The parameter "x" MUST be present and contains the x coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
-* The parameter "d" MUST be present and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+* The parameter "d" MUST be present for private keys and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
 ## HYBRID {#hybrid}
 
@@ -223,7 +223,7 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 
 # Hybrid Key Representation with COSE
 
-The approach taken here matches the work done to support secp256k1 in JOSE and COSE in {{?RFC8812}}. The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
+The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE and COSE in {{?RFC8812}}. The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
 
         +==============+=======+====================+===============================+
         | Name                 | Value | Description                 | Recommended  |
@@ -364,7 +364,7 @@ Encryption Algorithms" registry:
    registry for JWK "pq-kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
-   PQC KEM algorithms defined in Section 6.2.1.1.
+   PQC KEM algorithms defined in {{hybrid-kem}}.
 
    The implementation requirements of a PQC KEM may be changed over time
    as the cryptographic landscape evolves, for instance, to change the
@@ -516,7 +516,7 @@ The following has to be added to the "COSE Algorithms" registry:
    registry for "pq-kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
-   PQC KEM algorithms defined in Section 6.2.1.1.
+   PQC KEM algorithms defined in {{hybrid-kem}}.
 
    The implementation requirements of a PQC KEM may be changed over time
    as the cryptographic landscape evolves, for instance, to change the
