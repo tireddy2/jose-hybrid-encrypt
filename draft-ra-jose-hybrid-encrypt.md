@@ -142,15 +142,15 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               | alg                  | Description                       |
               +========+=================================================+
               | x25519_kyber512      | Curve25519 elliptic curve +       |
-              |                      | Kyber512 paraneter                |
+              |                      | Kyber512 parameter                |
               +========+=================================================+
-              | secp384r1_kyber768   | P-384 + Kyber768 paraneter        |
+              | secp384r1_kyber768   | P-384 + Kyber768 parameter        |
               |                      |                                   |
               +========+=================================================+
               | x25519_kyber768      | Curve25519 elliptic curve +       |
-              |                      | Kyber768 paraneter                |
+              |                      | Kyber768 parameter                |
               +========+=================================================+
-              | secp256r1_kyber512   | P-256 +  Kyber512 paraneter       |
+              | secp256r1_kyber512   | P-256 +  Kyber512 parameter       |
               |                      |                                   |
               +==========================================================+
 
@@ -229,15 +229,15 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
         | x25519_kyber512      | TBD12 | Curve25519 elliptic curve + | TBD40        |
-        |                      |       | Kyber512 paraneter          |              |
+        |                      |       | Kyber512 parameter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp384r1_kyber768   | TBD11 | P-384 + Kyber768 paraneter  | TBD41        |
+        | secp384r1_kyber768   | TBD11 | P-384 + Kyber768 parameter  | TBD41        |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
         | x25519_kyber768      | TBD10 | Curve25519 elliptic curve   | TBD42        |
-        |                      |       | Kyber768 paraneter          |              |
+        |                      |       | Kyber768 parameter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
-        | secp256r1_kyber512   | TBD13 | P-256 + Kyber512 paraneter  | TBD43        |
+        | secp256r1_kyber512   | TBD13 | P-256 + Kyber512 parameter  | TBD43        |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
@@ -249,7 +249,7 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
         | HYBRID               | TBD   | kty for PQ/T Hybrid KEM     | TBD44        |
-        |                      |       | Kyber512 paraneter          |              |
+        |                      |       | Kyber512 parameter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
                                        Table 3
