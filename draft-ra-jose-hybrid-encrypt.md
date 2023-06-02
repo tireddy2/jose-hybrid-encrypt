@@ -61,10 +61,9 @@ informative:
 --- abstract
 
 Hybrid key exchange refers to using multiple key exchange algorithms simultaneously and combining the result with the goal of providing
-security  as long as at least one of the component algorithms is not broken. It is motivated by transition to post-quantum cryptography. 
+security even if all but one of the component algorithms is broken. It is motivated by transition to post-quantum cryptography. 
 This document provides a construction for hybrid key exchange in JOSE and COSE. It defines the use of traditional and PQC algorithms, 
 a hybrid post-quantum KEM, for JOSE and COSE. 
-
 
 
 --- middle
