@@ -326,7 +326,7 @@ The following has to be added to the "JSON Web Signature and
 Encryption Algorithms" registry:
 
 - Algorithm Name: "x25519_kyber768"
-- Algorithm Description: Curve25519 elliptic curve + Kyber768 paraneter
+- Algorithm Description: Curve25519 elliptic curve + Kyber768 parameter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
@@ -334,7 +334,7 @@ Encryption Algorithms" registry:
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp384r1_kyber768"
-- Algorithm Description: P-384 + Kyber768 paraneter
+- Algorithm Description: P-384 + Kyber768 parameter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
@@ -342,7 +342,7 @@ Encryption Algorithms" registry:
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber512"
-- Algorithm Description: Curve25519 elliptic curve + Kyber512 paraneter
+- Algorithm Description: Curve25519 elliptic curve + Kyber512 parameter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
@@ -350,7 +350,7 @@ Encryption Algorithms" registry:
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp256r1_kyber512"
-- Algorithm Description: P-256 + Kyber512 paraneter
+- Algorithm Description: P-256 + Kyber512 parameter
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
@@ -487,25 +487,25 @@ The following has to be added to the "COSE Algorithms" registry:
 
 - Name: x25519_kyber768
 - Value: TBD10
-- Description: Curve25519 elliptic curve + Kyber768 paraneter
+- Description: Curve25519 elliptic curve + Kyber768 parameter
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp384r1_kyber768
 - Value: TBD11
-- Description: P-384 + Kyber768 paraneter
+- Description: P-384 + Kyber768 parameter
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: x25519_kyber512
 - Value: TBD12
-- Description: Curve25519 elliptic curve + Kyber512 paraneter
+- Description: Curve25519 elliptic curve + Kyber512 parameter
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp256r1_kyber512
 - Value: TBD13
-- Description: Curve25519 elliptic curve + Kyber512 paraneter
+- Description: Curve25519 elliptic curve + Kyber512 parameter
 - Reference: This document (TBD)
 - Recommended: TBD7
 
