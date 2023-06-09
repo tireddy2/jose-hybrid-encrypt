@@ -270,32 +270,32 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         | secp256r1_kyber512            | TBD13  | P-256 + Kyber512 parameter  | TBD43       |
         |                               |        |                             |             |
         +--------------+-------+---------======---------------+-------------------------=----+
-        | x25519_kyber512+A128KW        | TBD14  | Curve25519 elliptic curve + | TBD41       |
+        | x25519_kyber512+A128KW        | TBD14  | Curve25519 elliptic curve + | TBD44       |
         |                               |        | Kyber512 parameter +        |             |
         |                               |        | CEK wrapped with "A128KW"   |             |
         +--------------+-------+------------------------+------------------------------=-----+
-        | secp384r1_kyber768+A128KW     | TBD15  | P-384 + Kyber768 parameter  | TBD42       |
+        | secp384r1_kyber768+A128KW     | TBD15  | P-384 + Kyber768 parameter  | TBD45       |
         |                               |        | + CEK wrapped with "A128KW" |             |
         +--------------+-------+------------------------+-------------------------=----------+
-        | x25519_kyber768+A128KW        | TBD16  | Curve25519 elliptic curve   | TBD43       |
+        | x25519_kyber768+A128KW        | TBD16  | Curve25519 elliptic curve   | TBD46       |
         |                               |        | Kyber768 parameter          |             |
         |                               |        | + CEK wrapped with "A128KW" |             |
         +--------------+-------+------------------------+------------------------------=-----+
-        | secp256r1_kyber512+A128KW     | TBD17  | P-256 + Kyber512 parameter  | TBD434      |
+        | secp256r1_kyber512+A128KW     | TBD17  | P-256 + Kyber512 parameter  | TBD47       |
         |                               |        | + CEK wrapped with "A128KW" |             |
         +--------------+-------+------------------------+------------------------------=-----+
-        | x25519_kyber512+A256KW        | TBD14  | Curve25519 elliptic curve + | TBD45       |
+        | x25519_kyber512+A256KW        | TBD18  | Curve25519 elliptic curve + | TBD48       |
         |                               |        | Kyber512 parameter +        |             |
         |                               |        | CEK wrapped with "A256KW"   |             |
         +--------------+-------+------------------------+------------------------------=-----+
-        | secp384r1_kyber768+A256KW     | TBD15  | P-384 + Kyber768 parameter  | TBD46       |
+        | secp384r1_kyber768+A256KW     | TBD19  | P-384 + Kyber768 parameter  | TBD49       |
         |                               |        | + CEK wrapped with "A256KW" |             |
         +--------------+-------+------------------------+-------------------------=----------+
-        | x25519_kyber768+A256KW        | TBD16  | Curve25519 elliptic curve   | TBD47       |
+        | x25519_kyber768+A256KW        | TBD20  | Curve25519 elliptic curve   | TBD50       |
         |                               |        | Kyber768 parameter          |             |
         |                               |        | + CEK wrapped with "A256KW" |             |
         +--------------+-------+------------------------+------------------------------=-----+
-        | secp256r1_kyber512+A256KW     | TBD17  | P-256 + Kyber512 parameter  | TBD48       |
+        | secp256r1_kyber512+A256KW     | TBD21  | P-256 + Kyber512 parameter  | TBD51       |
         |                               |        | + CEK wrapped with "A256KW" |             |
         +--------------+-------+------------------------+------------------------------=-----+
       
@@ -307,7 +307,7 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         +==============+=======+====================+===============================+
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
-        | HYBRID               | TBD   | kty for PQ/T Hybrid KEM     | TBD44        |
+        | HYBRID               | TBD99 | kty for PQ/T Hybrid KEM     | TBD100       |
         |                      |       | Kyber512 parameter          |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
@@ -328,7 +328,7 @@ registry:
 - Description: Hybrid Key Exchange
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 The following has to be added to the "JSON Web Key Parameters"
 registry:
@@ -338,56 +338,56 @@ registry:
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "d"
 - Parameter Description: The private key
 - Parameter Information Class: Private
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "x"
 - Parameter Description: x coordinate for the public key
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "y"
 - Parameter Description: y coordinate for the public key
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "kem"
 - Parameter Description: PQC KEM Algorithm 
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "kem-pk"
 - Parameter Description: PQC KEM Public Key 
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "kem-sk"
 - Parameter Description: PQC KEM Private Key
 - Parameter Information Class: Private
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 - Parameter Name: "kem-ct"
 - Parameter Description: PQC KEM ciphertext
 - Parameter Information Class: Public 
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
-- Specification Document(s): Section 2 of RFC 8037
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 
 The following has to be added to the "JSON Web Signature and
 Encryption Algorithms" registry:
@@ -397,7 +397,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp384r1_kyber768"
@@ -405,7 +405,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber512"
@@ -413,7 +413,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp256r1_kyber512"
@@ -421,7 +421,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber768+A128KW"
@@ -429,7 +429,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp384r1_kyber768+A128KW"
@@ -437,7 +437,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber512+A128KW"
@@ -445,7 +445,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp256r1_kyber512+A128KW"
@@ -453,7 +453,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber768+A256KW"
@@ -461,7 +461,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp384r1_kyber768+A256KW"
@@ -469,7 +469,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): S{{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "x25519_kyber512+A256KW"
@@ -477,7 +477,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 - Algorithm Name: "secp256r1_kyber512+A256KW"
@@ -485,7 +485,7 @@ Encryption Algorithms" registry:
 - Algorithm Usage Location(s): "alg"
 - JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): Section 6 of this document (TBD)
+- Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
 ### JSON PQC KEM Registry
@@ -648,49 +648,49 @@ The following has to be added to the "COSE Algorithms" registry:
 - Recommended: TBD7
 
 - Name: x25519_kyber768+A128KW
-- Value: TBD10
+- Value: TBD14
 - Description: Curve25519 elliptic curve + Kyber768 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp384r1_kyber768+A128KW
-- Value: TBD11
+- Value: TBD15
 - Description: P-384 + Kyber768 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: x25519_kyber512+A128KW
-- Value: TBD12
+- Value: TBD16
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp256r1_kyber512+A128KW
-- Value: TBD13
+- Value: TBD17
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: x25519_kyber768+A256KW
-- Value: TBD10
+- Value: TBD18
 - Description: Curve25519 elliptic curve + Kyber768 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp384r1_kyber768+A256KW
-- Value: TBD11
+- Value: TBD19
 - Description: P-384 + Kyber768 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: x25519_kyber512+A256KW
-- Value: TBD12
+- Value: TBD20
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
 
 - Name: secp256r1_kyber512+A256KW
-- Value: TBD13
+- Value: TBD21
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
 - Recommended: TBD7
