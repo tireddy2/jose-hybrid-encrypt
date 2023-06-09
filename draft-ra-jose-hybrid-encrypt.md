@@ -155,9 +155,9 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 
                                  Table 1
                       
-* The parameter "pq-kem" MUST be present and set to the PQC KEM algorithm.
-* The parameter "pq-pk" MUST be present and contains the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
-* The parameter "pq-sk" MUST be present for private keys and contains the PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+* The parameter "kem" MUST be present and set to the PQC KEM algorithm.
+* The parameter "kem-pk" MUST be present and contains the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
+* The parameter "kem-sk" MUST be present for private keys and contains the PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 * The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used (from the "JSON Web Elliptic Curve" registry).
 * The parameter "x" MUST be present and contains the x coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
@@ -167,7 +167,7 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 
    The following key subtypes are defined here for purpose of "PQ/T Hybrid KEM in JSON Web Key (JWK) form" (HYBRID):
 
-      "pq-kem"          PQC KEM Applied
+      "kem"            PQC KEM Applied
       Kyber512            Kyber512          
       Kyber768            Kyber768
 
@@ -196,9 +196,9 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
    computation in this example (including the private part) is:
 
      {"kty":"HYBRID",
-      "pq-kem": "kyber512",
-      "pq-pk":"bob_kyber_public_key",
-      "pq-sk":"bob_kyber_private_key"
+      "kem": "kyber512",
+      "kem-pk":"bob_kyber_public_key",
+      "kem-sk":"bob_kyber_private_key"
       "crv":"P-256",
       "x":"bob_public_key_x",
       "y":"bob_public_key_y",
@@ -301,21 +301,21 @@ registry:
 - Change Controller: IESG
 - Specification Document(s): Section 2 of RFC 8037
 
-- Parameter Name: "pq-kem"
+- Parameter Name: "kem"
 - Parameter Description: PQC KEM Algorithm 
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
 - Specification Document(s): Section 2 of RFC 8037
 
-- Parameter Name: "pq-pk"
+- Parameter Name: "kem-pk"
 - Parameter Description: PQC KEM Public Key 
 - Parameter Information Class: Public
 - Used with "kty" Value(s): "HYBRID"
 - Change Controller: IESG
 - Specification Document(s): Section 2 of RFC 8037
 
-- Parameter Name: "pq-sk"
+- Parameter Name: "kem-sk"
 - Parameter Description: PQC KEM Private Key
 - Parameter Information Class: Private
 - Used with "kty" Value(s): "HYBRID"
@@ -360,7 +360,7 @@ Encryption Algorithms" registry:
 ### JSON PQC KEM Registry
 
    This section establishes the IANA "JSON PQC KEM"
-   registry for JWK "pq-kem" member values.  The registry records the PQC
+   registry for JWK "kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
    PQC KEM algorithms defined in {{hybrid-kem}}.
@@ -463,21 +463,21 @@ registry:
 - Reference: This document (TBD)
 
 - Key Type: TBD1
-- Name: pq-kem
+- Name: kem
 - Label : TBD2
 - CBOR Type: int / tstr 
 - Description: PQC KEM Algorithm
 - Reference: This document (TBD)
 
 - Key Type: TBD1
-- Name: pq-pk
+- Name: kem-pk
 - Label : TBD3
 - CBOR Type: bstr
 - Description: PQC KEM Public Key
 - Reference: This document (TBD)
 
 - Key Type: TBD1
-- Name: pq-sk
+- Name: kem-sk
 - Label : TBD4
 - CBOR Type: bstr
 - Description:  PQC KEM Private Key
@@ -512,7 +512,7 @@ The following has to be added to the "COSE Algorithms" registry:
 ### COSE PQC KEM Registry
 
    This section establishes the IANA "COSE PQC KEM"
-   registry for "pq-kem" member values.  The registry records the PQC
+   registry for "kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
    PQC KEM algorithms defined in {{hybrid-kem}}.
@@ -583,3 +583,5 @@ The following has to be added to the "COSE Algorithms" registry:
 
 # Acknowledgments
 {: numbered="false"}
+
+Thanks to Mike Ounsworth for the discussion and comments.
