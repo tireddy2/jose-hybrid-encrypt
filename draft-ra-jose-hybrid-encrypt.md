@@ -308,7 +308,7 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
         | HYBRID               | TBD99 | kty for PQ/T Hybrid KEM     | TBD100       |
-        |                      |       | Kyber512 parameter          |              |
+        |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
                                        Table 3
