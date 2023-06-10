@@ -109,13 +109,14 @@ Building a PQ/T hybrid KEM requires a secure function which combines the output 
 
 The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and COSE. 
 
-The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC5652}} define the Direct Key Agreement and Key Agreement with Key Wrap classes.
+The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC5652}} define the Direct Key Agreement and Key Agreement with Key Wrap classes. If
+multiple recipients are needed, then the version with key wrap is used.
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional and PQC KEMs. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange and PQC KEM. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
 
-In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". In the case of a traditional algorithm (e.g., x25519, secp384r1) there is no associated ciphertext present when calculating the constant-length input key (k) disussed in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
+In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
 
 # KEM PQC Algorithms
 
@@ -188,11 +189,13 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 * The parameter "kem" MUST be present and set to the PQC KEM algorithm.
 * The parameter "kem-pk" MUST be present and contains the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "kem-sk" MUST be present for private keys and contains the PQC KEM private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
-* The parameter "kem-ct" MUST be present and contains the KEM ciphertext encoded using the base64url encoding. 
+* The parameter "kem-ct" MUST be present for KEM ciphertext encoded using the base64url {{?RFC4648}} encoding. 
 * The parameter "crv" MUST be present and contains the Elliptic Curve Algorithm used (from the "JSON Web Elliptic Curve" registry).
 * The parameter "x" MUST be present and contains the x coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding.
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
 * The parameter "d" MUST be present for private keys and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
+
+"A128KW" and "A256KW" are AES Key Wrap with 128-bit key and 256-bit key.
 
 ## HYBRID {#hybrid}
 
@@ -204,9 +207,9 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 
 ## Example Hybrid Key Agreement Computation
 
-   This example uses Hybrid Key Agreement and the KEM Combiner to derive
+   This example uses secp256r1_kyber512 Key Agreement and the KEM Combiner to derive
    the CEK in the manner described in {{kem-combiner}}.  In this example, the
-   Hybrid Direct Key Agreement mode ("alg" value "HYBRID") is used to
+   secp256r1_kyber512 Direct Key Agreement mode ("alg" value "secp256r1_kyber512") is used to
    produce an agreed-upon key for AES GCM with a 128-bit key ("enc"
    value "A128GCM").
 
