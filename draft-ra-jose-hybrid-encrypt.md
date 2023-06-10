@@ -109,8 +109,7 @@ Building a PQ/T hybrid KEM requires a secure function which combines the output 
 
 The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are concatenated togethor and used as the shared secret in JOSE and COSE. 
 
-The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC5652}} define the Direct Key Agreement and Key Agreement with Key Wrap classes. If
-multiple recipients are needed, then the version with key wrap is used.
+The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC5652}} define the Direct Key Agreement and Key Agreement with Key Wrap classes. If multiple recipients are needed, then the version with key wrap is used.
 
 # KEM Combiner {#kem-combiner}
 
@@ -143,15 +142,17 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               +========+=======================================================+
               | x25519_kyber512            | Curve25519 elliptic curve +       |
               |                            | Kyber512 parameter                |
+              |                            | Direct Key Agreement              |
               +========+=======================================================+
               | secp384r1_kyber768         | P-384 + Kyber768 parameter        |
-              |                            |                                   |
+              |                            | Direct Key Agreement              |
               +========+=======================================================+
               | x25519_kyber768            | Curve25519 elliptic curve +       |
               |                            | Kyber768 parameter                |
+              |                            | Direct Key Agreement              |
               +========+=======================================================+
               | secp256r1_kyber512         | P-256 +  Kyber512 parameter       |
-              |                            |                                   |
+              |                            | Direct Key Agreement              |
               +================================================================+
               | x25519_kyber512+A128KW     | Curve25519 elliptic curve +       |
               |                            | Kyber512 parameter + CEK wrapped  |
@@ -182,8 +183,6 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               |                            | + CEK wrapped with "A256KW"       |
               +================================================================+
 
-            
-
                                  Table 1
                       
 * The parameter "kem" MUST be present and set to the PQC KEM algorithm.
@@ -195,15 +194,17 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
 * The parameter "d" MUST be present for private keys and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
-"A128KW" and "A256KW" are AES Key Wrap with 128-bit key and 256-bit key.
+"A128KW" and "A256KW" are AES Key Wrap with 128-bit key and 256-bit key respectively.
 
-## HYBRID {#hybrid}
+## "kem" {#kem}
 
-   The following key subtypes are defined here for purpose of "PQ/T Hybrid KEM in JSON Web Key (JWK) form" (HYBRID):
+The "kem" (KEM) parameter identifies PQC KEM algorithm used with the "kem-pk" key. KEM values used by this specification are:
 
       "kem"            PQC KEM Applied
       Kyber512            Kyber512          
       Kyber768            Kyber768
+
+These values are registered in the IANA "JSON PQC KEM" registry defined in {{JSON-KEM-REGISTRY}}.  Additional "kem" values can be registered by other specifications.
 
 ## Example Hybrid Key Agreement Computation
 
@@ -254,53 +255,75 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
      }
    
 
-# Hybrid Key Representation with COSE
+# Hybrid Key Representation with COSE {#cose-hybrid-kem}
 
-The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE and COSE in {{?RFC8812}}. The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
+The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE and COSE in {{?RFC8812}}. The following tables map terms between JOSE and COSE for Key Type Parameters.
+
+        +==============+=======+========================================+==+
+        | Name                 | Value | Description                       |
+        +==============+=======+===========================================+
+        | crv                  | -1    | EC used                           |
+        +--------------+-------+-------------------------------------------+
+        | d                    | -4    | Private key                       |
+        +--------------+-------+-------------------------------------------+
+        | x                    | -2    | x coordinate for the public key   |
+        +--------------+-------+-------------------------------------------+
+        | y                    | -3    | y coordinate for the public key   |
+        +--------------+-------+-------------------------------------------+
+        | kem                  | TBD2  | PQC KEM Algorithm                 |
+        +--------------+-------+-------------------------------------------+
+        | kem-pk               | TBD3  | PQC KEM Public Key                |
+        +--------------+-------+-------------------------------------------+
+        | kem-sk               | TBD4  | PQC KEM Private Key               |
+        +--------------+-------+-------------------------------------------+
+        | kem-ct               | TBD5  | PQC KEM ciphertext                |
+        +--------------+-------+-------------------------------------------+
+
+The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
 
         +==============+===================+====================+============================+
         | Name                          | Value  | Description                 | Recommended |
-        +==============+===========+==-=================+=====================================+
-        | x25519_kyber512               | TBD10  | Curve25519 elliptic curve + | TBD40       |
+        +===================+===========+========+=============================+=============+
+        | x25519_kyber512               | TBD10  | Curve25519 elliptic curve + | No          |
         |                               |        | Kyber512 parameter          |             |
         +--------------+-------+-----------------------+------------------------=------------+
-        | secp384r1_kyber768            | TBD11  | P-384 + Kyber768 parameter  | TBD41       |
+        | secp384r1_kyber768            | TBD11  | P-384 + Kyber768 parameter  | No          |
         |                               |        |                             |             |
-        +--------------+-------+-----------------------+------------------------------------=+
-        | x25519_kyber768               | TBD12  | Curve25519 elliptic curve   | TBD42       |
+        +--------------+-------+-----------------------+-------------------------------------+
+        | x25519_kyber768               | TBD12  | Curve25519 elliptic curve   | No          |
         |                               |        | Kyber768 parameter          |             |
-        +--------------+-------+-----------------------+------------------------------=------+
-        | secp256r1_kyber512            | TBD13  | P-256 + Kyber512 parameter  | TBD43       |
+        +--------------+-------+-----------------------+-------------------------------------+
+        | secp256r1_kyber512            | TBD13  | P-256 + Kyber512 parameter  | No          |
         |                               |        |                             |             |
-        +--------------+-------+---------======---------------+-------------------------=----+
-        | x25519_kyber512+A128KW        | TBD14  | Curve25519 elliptic curve + | TBD44       |
+        +--------------+-------+---------======---------------+------------------------------+
+        | x25519_kyber512+A128KW        | TBD14  | Curve25519 elliptic curve + | No          |
         |                               |        | Kyber512 parameter +        |             |
         |                               |        | CEK wrapped with "A128KW"   |             |
-        +--------------+-------+------------------------+------------------------------=-----+
-        | secp384r1_kyber768+A128KW     | TBD15  | P-384 + Kyber768 parameter  | TBD45       |
+        +--------------+-------+------------------------+------------------------------------+
+        | secp384r1_kyber768+A128KW     | TBD15  | P-384 + Kyber768 parameter  | No          |
         |                               |        | + CEK wrapped with "A128KW" |             |
-        +--------------+-------+------------------------+-------------------------=----------+
-        | x25519_kyber768+A128KW        | TBD16  | Curve25519 elliptic curve   | TBD46       |
+        +--------------+-------+------------------------+------------------------------------+
+        | x25519_kyber768+A128KW        | TBD16  | Curve25519 elliptic curve   | No          |
         |                               |        | Kyber768 parameter          |             |
         |                               |        | + CEK wrapped with "A128KW" |             |
-        +--------------+-------+------------------------+------------------------------=-----+
-        | secp256r1_kyber512+A128KW     | TBD17  | P-256 + Kyber512 parameter  | TBD47       |
+        +--------------+-------+------------------------+------------------------------------+
+        | secp256r1_kyber512+A128KW     | TBD17  | P-256 + Kyber512 parameter  | No          |
         |                               |        | + CEK wrapped with "A128KW" |             |
-        +--------------+-------+------------------------+------------------------------=-----+
-        | x25519_kyber512+A256KW        | TBD18  | Curve25519 elliptic curve + | TBD48       |
+        +--------------+-------+------------------------+------------------------------------+
+        | x25519_kyber512+A256KW        | TBD18  | Curve25519 elliptic curve + | No          |
         |                               |        | Kyber512 parameter +        |             |
         |                               |        | CEK wrapped with "A256KW"   |             |
-        +--------------+-------+------------------------+------------------------------=-----+
-        | secp384r1_kyber768+A256KW     | TBD19  | P-384 + Kyber768 parameter  | TBD49       |
+        +--------------+-------+------------------------+------------------------------------+
+        | secp384r1_kyber768+A256KW     | TBD19  | P-384 + Kyber768 parameter  | No          |
         |                               |        | + CEK wrapped with "A256KW" |             |
-        +--------------+-------+------------------------+-------------------------=----------+
-        | x25519_kyber768+A256KW        | TBD20  | Curve25519 elliptic curve   | TBD50       |
+        +--------------+-------+------------------------+------------------------------------+
+        | x25519_kyber768+A256KW        | TBD20  | Curve25519 elliptic curve   | No          |
         |                               |        | Kyber768 parameter          |             |
         |                               |        | + CEK wrapped with "A256KW" |             |
-        +--------------+-------+------------------------+------------------------------=-----+
-        | secp256r1_kyber512+A256KW     | TBD21  | P-256 + Kyber512 parameter  | TBD51       |
+        +--------------+-------+------------------------+------------------------------------+
+        | secp256r1_kyber512+A256KW     | TBD21  | P-256 + Kyber512 parameter  | No          |
         |                               |        | + CEK wrapped with "A256KW" |             |
-        +--------------+-------+------------------------+------------------------------=-----+
+        +--------------+-------+------------------------+------------------------------------+
       
 
                                        Table 2
@@ -310,15 +333,31 @@ The approach taken here matches the work done to support PQ/T Hybrid KEM in JOSE
         +==============+=======+====================+===============================+
         | Name                 | Value | Description                 | Recommended  |
         +==============+=======+====================+=============--------==========+
-        | HYBRID               | TBD99 | kty for PQ/T Hybrid KEM     | TBD100       |
+        | HYBRID               | TBD1  | kty for PQ/T Hybrid KEM     | No           |
         |                      |       |                             |              |
         +--------------+-------+--------------------+-------------------------=-----+
 
                                        Table 3
 
+  The following tables map terms between JOSE and COSE for PQC KEM algorithms.
+
+        +==============+=======+====================+===============================+
+        | Name                 | Value | Description                 | Recommended  |
+        +==============+=======+====================+=============--------==========+
+        | Kyber512             | TBD7  | Kyber512                    | No           |
+        |                      |       |                             |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+        | Kyber768             | TBD9  | Kyber768                    | No           |
+        |                      |       |                             |              |
+        +--------------+-------+--------------------+-------------------------=-----+
+
+                                       Table 4
+
 # Security Considerations
 
-Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiners}} apply here. 
+Security considerations from {{?RFC7748}} and {{?I-D.ounsworth-cfrg-kem-combiners}} apply here. The shared secrets computed in the hybrid key exchange should be computed in a way that achieves the "hybrid" property: the resulting secret is secure as long as at least one of the component key exchange algorithms is unbroken.
+
+PQC KEMs used in the manner described in this document MUST explicitly be designed to be secure in the event that the public key is reused, such as achieving IND-CCA2 security. Kyber has such security properties.
 
 # IANA Considerations
 
@@ -491,13 +530,13 @@ Encryption Algorithms" registry:
 - Specification Document(s): {{hybrid-kem}} of this document (TBD)
 - Algorithm Analysis Documents(s): (TBD20)
 
-### JSON PQC KEM Registry
+### JSON PQC KEM Registry {#JSON-KEM-REGISTRY}
 
    This section establishes the IANA "JSON PQC KEM"
    registry for JWK "kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
-   PQC KEM algorithms defined in {{hybrid-kem}}.
+   PQC KEM algorithms defined in {{kem}}.
 
    The implementation requirements of a PQC KEM may be changed over time
    as the cryptographic landscape evolves, for instance, to change the
@@ -545,15 +584,15 @@ Encryption Algorithms" registry:
 
 - PQC KEM name: "Kyber512"
 - PQC KEM Description: Kyber512
-- JOSE Implementation Requirements: Required
+- JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): {{hybrid}}
+- Specification Document(s): {{kem}}
 
 - PQC KEM name: "Kyber768"
 - PQC KEM Description: Kyber768
-- JOSE Implementation Requirements: Required
+- JOSE Implementation Requirements: Optional
 - Change Controller: IESG
-- Specification Document(s): {{hybrid}}
+- Specification Document(s): {{kem}}
 
 ## COSE
 
@@ -630,73 +669,73 @@ The following has to be added to the "COSE Algorithms" registry:
 - Value: TBD10
 - Description: Curve25519 elliptic curve + Kyber768 parameter
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp384r1_kyber768
 - Value: TBD11
 - Description: P-384 + Kyber768 parameter
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: x25519_kyber512
 - Value: TBD12
 - Description: Curve25519 elliptic curve + Kyber512 parameter
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp256r1_kyber512
 - Value: TBD13
-- Description: Curve25519 elliptic curve + Kyber512 parameter
+- Description: P-256 + Kyber512 parameter
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: x25519_kyber768+A128KW
 - Value: TBD14
 - Description: Curve25519 elliptic curve + Kyber768 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp384r1_kyber768+A128KW
 - Value: TBD15
 - Description: P-384 + Kyber768 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: x25519_kyber512+A128KW
 - Value: TBD16
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp256r1_kyber512+A128KW
 - Value: TBD17
-- Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A128KW" 
+- Description: P-256 + Kyber512 parameter and CEK wrapped with "A128KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: x25519_kyber768+A256KW
 - Value: TBD18
 - Description: Curve25519 elliptic curve + Kyber768 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp384r1_kyber768+A256KW
 - Value: TBD19
 - Description: P-384 + Kyber768 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: x25519_kyber512+A256KW
 - Value: TBD20
 - Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 - Name: secp256r1_kyber512+A256KW
 - Value: TBD21
-- Description: Curve25519 elliptic curve + Kyber512 parameter and CEK wrapped with "A256KW" 
+- Description: P-256 + Kyber512 parameter and CEK wrapped with "A256KW" 
 - Reference: This document (TBD)
-- Recommended: TBD7
+- Recommended: No
 
 ### COSE PQC KEM Registry
 
@@ -704,7 +743,7 @@ The following has to be added to the "COSE Algorithms" registry:
    registry for "kem" member values.  The registry records the PQC
    KEM name, implementation requirements, and a reference to the
    specification that defines it.  This specification registers the
-   PQC KEM algorithms defined in {{hybrid-kem}}.
+   PQC KEM algorithms defined in {{cose-hybrid-kem}}.
 
    The implementation requirements of a PQC KEM may be changed over time
    as the cryptographic landscape evolves, for instance, to change the
@@ -761,14 +800,14 @@ The following has to be added to the "COSE Algorithms" registry:
 - Description: Kyber512
 - Change Controller: IESG
 - Reference: This document (TBD)
-- Recommended: TBD50
+- Recommended: No
 
 - Name: "Kyber768"
 - Value: TBD9
 - Description: Kyber768
 - Change Controller: IESG
 - Reference: This document (TBD)
-- Recommended: TBD51
+- Recommended: No
 
 # Acknowledgments
 {: numbered="false"}
