@@ -115,7 +115,19 @@ The JSON Web Algorithms (JWA) {{?RFC5652}} in Section 4.6 defines two ways using
 
 The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange and PQC KEM. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
 
-In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
+In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". 
+
+## JOSE
+
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, k will be constructed using the key derivation process defined in Section 4.6.2 of {{?RFC7518}}.
+
+In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by the "enc" algorithm.  In this case, the empty octet sequence is used as the JWE Encrypted Key value. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrapping algorithm.  In this case, the JWE Encrypted Key is the CEK wrapped with the agreed-upon key.
+
+## COSE
+
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, k will be constructed using the KDF discussed in {{?RFC8152}}. The Key Derivation Function (KDF) will vary depending on the key agreement algorithm chosen. 
+
+In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by the "enc" algorithm.  In this case, the "ciphertext" field is encoded as a nil value. In Key Wrap mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm.  In this case, the "ciphertext" field is the CEK wrapped with the agreed-upon key.
 
 # KEM PQC Algorithms
 
