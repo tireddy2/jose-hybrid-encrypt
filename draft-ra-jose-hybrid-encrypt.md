@@ -119,7 +119,7 @@ In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash
 
 In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, k will be constructed using the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE and k will be constructed using the KDF defined in {{?RFC8152}}.
 
-In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE should be used to construct k. However, in case of COSE, the KDF (Key Derivation Function) defined in {{?RFC8152}} should be used.
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE should be used to construct k. However, in case of COSE, the KDF (Key Derivation Function) defined in {{?RFC8152}} should be used. The KDF will vary depending on the key agreement algorithm chosen.
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm.  
 
