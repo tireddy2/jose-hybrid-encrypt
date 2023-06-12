@@ -131,8 +131,7 @@ NIST announced as well that they will be [opening a fourth round](https://csrc.n
 
 ## Kyber
 
-Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at two security levels: Kyber512 and Kyber768
-Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
+Kyber offers several parameter sets with varying levels of security and performance trade-offs. This document specifies the use of the Kyber algorithm at two security levels: Kyber512 and Kyber768. Kyber key generation, encapsulation and decaspulation functions are defined in {{?I-D.cfrg-schwabe-kyber}}.
 
 # Hybrid Key Representation with JOSE {#hybrid-kem}
 
