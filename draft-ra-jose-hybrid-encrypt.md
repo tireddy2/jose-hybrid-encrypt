@@ -52,6 +52,10 @@ informative:
      title: "Recommendation for Key-Derivation Methods in Key-Establishment Schemes"
      target: https://doi.org/10.6028/NIST.SP.800-56Cr2
      date: false
+  SP800-185:
+     title: "SHA-3 Derived Functions: cSHAKE, KMAC, TupleHash, and ParallelHash"
+     target: https://doi.org/10.6028/NIST.SP.800-185
+     date: false
   PQCAPI:
      title: "PQC - API notes"
      target: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/example-files/api-notes.pdf
@@ -113,11 +117,40 @@ The JSON Web Algorithms (JWA) {{?RFC7518}} in Section 4.6 defines two ways using
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange and PQC KEM. The fixedInfo string defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}} helps prevent cross-context attacks by making this key derivation unique to its protocol context. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. 
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC and Hash functions used with the PQ/T hybrid algorithms are specified in the table below:
 
-In case of JOSE and COSE, the KDF and Hash functions will both be SHA3-256 (Hash Size = 256 bit) and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). In case of JOSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "Javascript Object Signing and Encryption". In case of COSE, the fixedInfo string carrying the protocol-specific KDF binding will be set to "CBOR Object Signing and Encryption". 
+            +==============+=========+=========+==========+
+            | PQ/T hybrid algorithm  | KDF     | H        |
+            +========================+=========+==========+
+            | x25519_kyber512        | KMAC128 | SHA3-256 |
+            +------------------------+---------+----------+
+            | secp384r1_kyber768     | KMAC256 | SHA3-384 |
+            +------------------------+---------+----------+
+            | x25519_kyber768        | KMAC256 | SHA3-384 |
+            +-----------------------+----------+----------+
+            | secp256r1_kyber512     | KMAC128 | SHA3-256 |
+            +-----------------------+----------+----------+
 
-In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the HKDF (HMAC based Key Derivation Function) defined in Section 11 of {{?RFC8152}} would be used. The HKDF Algorithm leverages HMAC SHA-256 as the underlying PRF (Pseudo-Random function) and the context structure defined in Section 11.2 of {{?RFC8152}} is used. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 12.4.1 of {{?RFC8152}}).
+                             Table 1 
+
+
+   KMAC is defined in NIST SP 800-185 {{SP800-185}}.  The KMAC(K, X, L, S) parameters are instantiated as follows:
+
+   *  K: In case of JOSE, the context-specific string will be set to concat("JOSE", "_", Name of the PQ/T hybrid algorithm). In case of COSE, the context-specific string 
+      will be set to concat("COSE", "-", Name of the PQ/T hybrid algorithm). For example, concat("JOSE", "_","x25519_kyber512") = "JOSE_x25519_kyber512". 
+
+   *  X: the value "0x00000001 || k_1 || ... || k_n || fixedInfo", where
+      k_i = H(ss_i || ct_i), as defined above.
+
+   *  L: integer representation of outputBits.
+
+   *  S: empty string.
+
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the the HKDF (HMAC based Key Derivation Function) defined in Section 11 of {{?RFC8152}} would be used. The HKDF algorithm leverages HMAC-SHA-256 as the underlying PRF (Pseudo-Random function) and the context structure defined in Section 11.2 of {{?RFC8152}} is used. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 12.4.1 of {{?RFC8152}}).
+
+The KEM combiner instantiation of the first entry of Table 1 would be:
+
+      ss = KMAC128("COSE_x25519_kyber512", "0x00000001 || HMAC-SHA-256(DH-Shared, context) || SHA3-256(ss_1 || ct_1)" , 256, "")  
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm.  
 
@@ -186,7 +219,7 @@ A new key type (kty) value "HYBRID" is defined for expressing the cryptographic 
               |                            | + CEK wrapped with "A256KW"       |
               +============================+===================================+
 
-                                 Table 1
+                                 Table 2
                       
 * The parameter "kem" MUST be present and set to the PQC KEM algorithm.
 * The parameter "kem-pk" MUST be present and contains the PQC KEM public key encoded using the base64url {{?RFC4648}} encoding.
@@ -282,6 +315,8 @@ The approach taken here matches the work done to support secp256k1 in JOSE and C
         | kem-ct               | TBD5  | PQC KEM ciphertext                |
         +----------------------+-------------------------------------------+
 
+                                 Table 3
+
 The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
 
         +==============+===================+====================+============================+
@@ -329,7 +364,7 @@ The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
         +-------------------------------+--------+-----------------------------+-------------+
       
 
-                                       Table 2
+                                       Table 4
 
    The following tables map terms between JOSE and COSE for key types.
 
@@ -340,7 +375,7 @@ The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
         |                      |       |                             |              |
         +---------------------+--------+-----------------------------+--------------+
 
-                                       Table 3
+                                       Table 5
 
   The following tables map terms between JOSE and COSE for PQC KEM algorithms.
 
@@ -354,7 +389,7 @@ The following tables map terms between JOSE and COSE for PQ/T Hybrid KEM.
         |                      |       |                             |              |
         +---------------------+--------+-----------------------------+--------------+
 
-                                       Table 4
+                                       Table 6
 
 # Security Considerations
 
