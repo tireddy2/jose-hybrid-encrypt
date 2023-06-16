@@ -139,18 +139,18 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
    *  K: In case of JOSE, the context-specific string will be set to concat("JOSE", "_", Name of the PQ/T hybrid algorithm). In case of COSE, the context-specific string 
       will be set to concat("COSE", "-", Name of the PQ/T hybrid algorithm). For example, concat("JOSE", "_","x25519_kyber512") = "JOSE_x25519_kyber512". 
 
-   *  X: the value "0x00000001 || k_1 || ... || k_n || fixedInfo", where
-      k_i = H(ss_i || ct_i), as defined above.
+   *  X: concatenation of constant-length input keys (k1 and k2).
 
    *  L: integer representation of outputBits.
 
    *  S: empty string.
 
-In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the the HKDF (HMAC based Key Derivation Function) defined in Section 11 of {{?RFC8152}} would be used. The HKDF algorithm leverages HMAC-SHA-256 as the underlying PRF (Pseudo-Random function) and the context structure defined in Section 11.2 of {{?RFC8152}} is used. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 12.4.1 of {{?RFC8152}}).
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k1) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the the HKDF (HMAC based Key Derivation Function) defined in Section 11 of {{?RFC8152}} would be used. The HKDF algorithm leverages HMAC-SHA-256 as the underlying PRF (Pseudo-Random function) and the context structure defined in Section 11.2 of {{?RFC8152}} is used. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 12.4.1 of {{?RFC8152}}).
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
 
-      ss = KMAC128("COSE_x25519_kyber512", "0x00000001 || HMAC-SHA-256(DH-Shared, context) || SHA3-256(ss_1 || ct_1)" , 256, "")  
+      ss = KMAC128("COSE_x25519_kyber512", "0x00000001 || HMAC-SHA-256(DH-Shared, context) || 
+                   SHA3-256(ss_1 || ct_1)" , 256, "")  
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm.  
 
