@@ -139,7 +139,7 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
    *  K: In case of JOSE, the context-specific string will be set to concat("JOSE", "_", Name of the PQ/T hybrid algorithm). In case of COSE, the context-specific string 
       will be set to concat("COSE", "-", Name of the PQ/T hybrid algorithm). For example, concat("JOSE", "_","x25519_kyber512") = "JOSE_x25519_kyber512". 
 
-   *  X: concat(0x00000001, k_1, ..., k_n, fixedInfo).
+   *  X: concat(0x00000001, k_1, ... , k_n, fixedInfo).
 
    *  L: integer representation of outputBits.
 
@@ -149,10 +149,11 @@ In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) si
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
 
-      ss = KMAC128("COSE_x25519_kyber512", "0x00000001 || HKDF-256(DH-Shared-Secret, salt, context) || 
-                   SHA3-256(ss_1 || ct_1)" , 256, "")  
+      ss = KMAC128("COSE_x25519_kyber512", "0x00000001 || 
+                    HKDF-256(DH-Shared-Secret, salt, context) || 
+                    SHA3-256(ss_1 || ct_1)" , 256, "")  
 
-In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm.  
+In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm. 
 
 # KEM PQC Algorithms
 
