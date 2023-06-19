@@ -136,12 +136,13 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
 
    KMAC is defined in NIST SP 800-185 {{SP800-185}}.  The KMAC(K, X, L, S) parameters are instantiated as follows:
 
-   *  K: In case of JOSE, the context-specific string will be set to concat("JOSE", "_", Name of the PQ/T hybrid algorithm). In case of COSE, the context-specific string 
-      will be set to concat("COSE", "-", Name of the PQ/T hybrid algorithm). For example, concat("JOSE", "_","x25519_kyber512") = "JOSE_x25519_kyber512". 
+   *  K: context-specific string.
+      In case of JOSE, the context-specific string will be set to concat("JOSE", "_", Name of the PQ/T hybrid algorithm). In case of COSE, the context-specific string 
+      will be set to concat("COSE", "-", Name of the PQ/T hybrid algorithm). For example, concat("JOSE", "_","x25519_kyber512") = "JOSE_x25519_kyber512".
 
-   *  X: concat(0x00000001, k_1, ... , k_n, fixedInfo).
+   *  X: concat(0x00000001, k_1, ... , k_n).
 
-   *  L: integer representation of outputBits.
+   *  L: length of the output key in bits.
 
    *  S: empty string.
 
