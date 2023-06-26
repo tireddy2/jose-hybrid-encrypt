@@ -3,7 +3,7 @@ title: "Hybrid key exchange in JOSE and COSE"
 abbrev: "Hybrid key exchange in JOSE and COSE"
 category: std
 
-docname: draft-ra-jose-hybrid-encrypt
+docname: draft-ra-cose-hybrid-encrypt
 submissiontype: IETF
 number:
 date:
@@ -13,16 +13,17 @@ area: "Security"
 workgroup: "COSE"
 keyword:
  - PQC
+ - COSE
  - JOSE
  - Hybrid
- - COSE
+
  
 
 venue:
-  group: "jose"
+  group: "cose"
   type: "Working Group"
-  mail: "jose@ietf.org"
-  arch: "https://mailarchive.ietf.org/arch/browse/jose/"
+  mail: "cose@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/cose/"
   
 
 stand_alone: yes
