@@ -61,6 +61,10 @@ informative:
      title: "PQC - API notes"
      target: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/example-files/api-notes.pdf
      date: false
+  FO:
+     title: Secure Integration of Asymmetric and Symmetric Encryption Schemes
+     target: https://link.springer.com/article/10.1007/s00145-011-9114-1
+     date: false
 
      
 --- abstract
@@ -115,6 +119,8 @@ Building a PQ/T hybrid KEM requires a secure function which combines the output 
 The migration to PQ/T Hybrid KEM calls for performing multiple key encapsulations in parallel and then combining their outputs to derive a single shared secret. It is compatible with NIST SP 800-56Cr2 [SP800-56C] when viewed as a key derivation function. The hybrid scheme defined in this document is the combination of Traditional and Post-Quantum Algorithms. The Key agreement Traditional and Post-Quantum Algorithms are used in parallel to generate shared secrets. The two shared secrets are hashed and concatenated together and used as the shared secret in JOSE and COSE. 
 
 The JSON Web Algorithms (JWA) {{?RFC7518}} in Section 4.6 defines two ways using the key agreement result. When Direct Key Agreement is employed, the shared secret established through the ECDH algorithm will be the content encryption key (CEK). When Key Agreement with Key Wrapping is employed, the shared secret established through the ECDH algorithm will wrap the CEK. Simiarly, COSE in Sections 8.5.4 and 8.5.5 {{?RFC9052}} define the Direct Key Agreement and Key Agreement with Key Wrap classes. If multiple recipients are needed, then the version with key wrap is used.
+
+It is essential to note that if the traditional part is broken, one needs to apply Fujisaki-Okamoto {{FO}} transform on the PQC KEM part to ensure that the overall scheme is IND-CCA2 secure. FO transforms leverages hybrid encryption schemes (Symmetric + Asymmetric encryption: not to be confused with PQ/T hybrid) in the random oracle model to convert an IND-CPA encryption scheme to an IND-CCA2 encryption scheme. In that case, without the presence of ephemeral keys one can re-use the PQC KEM keys (but not recommended) to depending on some upper bound level for the number of times the keys can be re-used.
 
 # KEM Combiner {#kem-combiner}
 
