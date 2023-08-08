@@ -128,19 +128,19 @@ It is essential to note that in the PQ/T hybrid KEM mode, one needs to apply Fuj
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange (Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Section 6.3.1 of {{?RFC9053}} for COSE) and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC and Hash functions used with the PQ/T hybrid algorithms are specified in the table below:
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange (Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Section 6.3.1 of {{?RFC9053}} for COSE) and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC functions used with the PQ/T hybrid algorithms are specified in the table below:
 
-            +==============+=========+=========+==========+
-            | PQ/T hybrid algorithm  | KDF     | H        |
-            +========================+=========+==========+
-            | x25519_kyber512        | KMAC128 | SHA3-256 |
-            +------------------------+---------+----------+
-            | secp384r1_kyber768     | KMAC256 | SHA3-384 |
-            +------------------------+---------+----------+
-            | x25519_kyber768        | KMAC256 | SHA3-384 |
-            +-----------------------+----------+----------+
-            | secp256r1_kyber512     | KMAC128 | SHA3-256 |
-            +-----------------------+----------+----------+
+            +==============+=========+=========+
+            | PQ/T hybrid algorithm  | KDF     |
+            +========================+=========+
+            | x25519_kyber512        | KMAC128 |
+            +------------------------+---------+
+            | secp384r1_kyber768     | KMAC256 |
+            +------------------------+---------+
+            | x25519_kyber768        | KMAC256 |
+            +-----------------------+----------+
+            | secp256r1_kyber512     | KMAC128 |
+            +-----------------------+----------+
 
                              Table 1 
 
@@ -155,16 +155,16 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
 
    *  L: length of the output key in bits.
 
-   *  S: empty string.
+   *  S: utf-8 string "KDF".
 
 In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k1) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the HKDF (HMAC based Key Derivation Function) defined in Section 5 of {{?RFC9053}} would be used. The HKDF algorithm leverages HMAC SHA-256 as the underlying PRF (Pseudo-Random function) for secp256r1 and x25519, and HMAC SHA-384 for secp384r1. The context structure defined in Section 5.2 of {{?RFC9053}}, salt and secret from DH key agreement are used as inputs to the HKDF. In case of JOSE, the fixedInfo parameter will carry the JOSE context specific data defined 
-in Section 4.6.2 of {{?RFC7518}}. In case of COSE, the fixedInfo parameter will carry the context structure defined in Section 5.2 of {{?RFC9053}}. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 6.3.1 of {{?RFC9053}}).
+in Section 4.6.2 of {{?RFC7518}}. In case of COSE, the fixedInfo parameter will carry the COSE context structure defined in Section 5.2 of {{?RFC9053}}. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 6.3.1 of {{?RFC9053}}).
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
 
       ss = KMAC128("COSE_Post_Quantum_Traditional_Hybrid_X25519_kyber512", "0x00000001 || 
                     HKDF-256(DH-Shared-Secret, salt, context) || 
-                    SHA3-256(ss_1 || ct_1)" , 256, context)  
+                    ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 128, "KDF")  
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm. 
 
