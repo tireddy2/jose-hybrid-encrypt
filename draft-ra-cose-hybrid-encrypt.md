@@ -157,7 +157,7 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
 
    *  S: utf-8 string "KDF".
 
-In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k1) defined in Section 3.1 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the HKDF (HMAC based Key Derivation Function) defined in Section 5 of {{?RFC9053}} would be used. The HKDF algorithm leverages HMAC SHA-256 as the underlying PRF (Pseudo-Random function) for secp256r1 and x25519, and HMAC SHA-384 for secp384r1. The context structure defined in Section 5.2 of {{?RFC9053}}, salt and secret from DH key agreement are used as inputs to the HKDF. In case of JOSE, the fixedInfo parameter will carry the JOSE context specific data defined 
+In the case of a traditional key exchange algorithm (e.g., x25519, secp384r1) since there is no associated ciphertext present when calculating the constant-length input key (k1) defined in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}}, the key derivation process defined in Section 4.6.2 of {{?RFC7518}} for JOSE would be used to construct k. However, in case of COSE, the HKDF (HMAC based Key Derivation Function) defined in Section 5 of {{?RFC9053}} would be used. The HKDF algorithm leverages HMAC SHA-256 as the underlying PRF (Pseudo-Random function) for secp256r1 and x25519, and HMAC SHA-384 for secp384r1. The context structure defined in Section 5.2 of {{?RFC9053}}, salt and secret from DH key agreement are used as inputs to the HKDF. In case of JOSE, the fixedInfo parameter will carry the JOSE context specific data defined 
 in Section 4.6.2 of {{?RFC7518}}. In case of COSE, the fixedInfo parameter will carry the COSE context structure defined in Section 5.2 of {{?RFC9053}}. Note that the result of an ECDH key agreement process does not provide a uniformly random secret and it needs to be run through a KDF in order to produce a usable key (see Section 6.3.1 of {{?RFC9053}}).
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
@@ -165,6 +165,8 @@ The KEM combiner instantiation of the first entry of Table 1 would be:
       ss = KMAC128("COSE_Post_Quantum_Traditional_Hybrid_X25519_kyber512", "0x00000001 || 
                     HKDF-256(DH-Shared-Secret, salt, context) || 
                     ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 128, "KDF")  
+
+Where ss_1 is shared secret and its corresponding ciphertext ct_i generated from kemEncaps(pk). If ss_1 or ct_1 are not guaranteed to have constant length, rlen encoded length is appended when concatenating as discussed in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm. 
 
