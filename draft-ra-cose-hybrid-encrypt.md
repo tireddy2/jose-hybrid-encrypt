@@ -166,7 +166,7 @@ The KEM combiner instantiation of the first entry of Table 1 would be:
                     HKDF-256(DH-Shared-Secret, salt, context) || 
                     ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 128, "KDF")  
 
-Where ss_1 is shared secret and its corresponding ciphertext ct_i generated from kemEncaps(pk). If ss_1 or ct_1 are not guaranteed to have constant length, rlen encoded length is appended when concatenating as discussed in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
+Where ss_1 is shared secret and its corresponding ciphertext ct_1 generated from kemEncaps(pk). If ss_1 or ct_1 are not guaranteed to have constant length, rlen encoded length is appended when concatenating as discussed in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
 
 In Direct Key Agreement mode, the output of the KEM combiner MUST be a key of the same length as that used by encryption algorithm. In Key Agreement with Key Wrapping mode, the output of the KEM combiner MUST be a key of the length needed for the specified key wrap algorithm. 
 
