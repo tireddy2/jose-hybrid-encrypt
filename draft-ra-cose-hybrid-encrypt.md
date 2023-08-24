@@ -128,7 +128,7 @@ It is essential to note that in the PQ/T hybrid KEM mode, one needs to apply Fuj
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange (Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Section 6.3.1 of {{?RFC9053}} for COSE) and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC functions used with the PQ/T hybrid algorithms are specified in the table below:
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange, Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Key Agreement with Ephemeral-Static (ES)/ Static-Static (SS) Diffie-Hellman (DH) defined in Section 6.3.1 of {{?RFC9053}} for COSE and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC functions used with the PQ/T hybrid algorithms are specified in the table below:
 
             +==============+=========+=========+
             | PQ/T hybrid algorithm  | KDF     |
@@ -246,7 +246,7 @@ The parameter "kty" MUST be present and set to "OKP" defined in Section 2 of {{?
 * The parameter "y" MUST be present and contains the y coordinate for the Elliptic Curve point encoded using the base64url {{?RFC4648}} encoding. This parameter is not present for "X25519".
 * The parameter "d" MUST be present for private keys and contains the Elliptic Curve Algorithm private key encoded using the base64url encoding. This parameter MUST NOT be present for public keys.
 
-In Table 2, "A128KW" and "A256KW" are AES Key Wrap with 128-bit key and 256-bit key respectively. 
+In Table 2, "A128KW" and "A256KW" are AES Key Wrap with 128-bit key and 256-bit key respectively.  Encryption of the plaintext is accomplished with AES symmetric key cryptography.
 
 The specification allows a small number of "known good" PQ/T hybrid algorithms listed in Table 2 instead of allowing arbitrary combinations of traditional and PQC algorithms. It follows the recent trend in protocols to only allow a small number of "known good" configurations that make sense, instead of allowing arbitrary combinations of individual configuration choices that may interact in dangerous ways. 
 
@@ -397,6 +397,51 @@ The following table maps terms between JOSE and COSE for PQ/T Hybrid KEM.
         +---------------------+--------+-----------------------------+--------------+
 
                                        Table 5
+
+This example uses the following parameters:
+
+* Algorithm for payload encryption: AES-GCM-128
+* IV: 0x26, 0x68, 0x23, 0x06, 0xd4, 0xfb, 0x28, 0xca, 0x01, 0xb4, 0x3b, 0x80
+* Algorithm for content key distribution: secp256r1_kyber512
+* KID: "kid-4"
+
+The COSE_Encrypt structure 
+
+~~~
+
+   96(
+     [
+       / protected h'a10101' / << {
+           / alg / 1:1 / AES-GCM 128 /
+         } >>,
+       / unprotected / {
+         / iv / 5:h'26682306D4FB28CA01B43B80'
+       },
+      / null because of detached ciphertext /
+      null,
+       / recipients / [
+         [
+           / protected h'Assuming -50 is assigned' / << {
+               / alg / 1:-50 / secp256r1_kyber512 /
+             } >>,
+           / unprotected / {
+             / ephemeral / -1:{
+               / kty / 1:1 /OKP/,
+               / crv / -1:1 /secp256r1 or P-256/,
+               / x / -2:h'415A8ED270C4B1F10B0A2D42B28EE6028CE25D74552CB4291A4069A2E989B0F6',
+               / y / -3:h'CCC9AAF60514B9420C80619A4FF068BC1D77625BA8C90200882F7D5B73659E76'
+             },
+             / kid / 4:'kid-10'
+           }
+         ]
+       ]
+     ]
+   )
+
+~~~
+
+                    Figure 1: COSE_Encrypt Example for secp256r1_kyber512               
+     
 
 # Security Considerations
 
