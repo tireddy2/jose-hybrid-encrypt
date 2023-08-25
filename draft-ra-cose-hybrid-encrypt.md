@@ -128,7 +128,7 @@ It is essential to note that in the PQ/T hybrid KEM mode, one needs to apply Fuj
 
 # KEM Combiner {#kem-combiner}
 
-The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange (Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Key Agreement with Ephemeral-Static (ES)/ Static-Static (SS) Diffie-Hellman (DH) defined in Section 6.3.1 of {{?RFC9053}} for COSE) and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC functions used with the PQ/T hybrid algorithms are specified in the table below:
+The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-combiners}} that takes in two or more shared secrets and returns a combined shared secret. In case of PQ/T Hybrid KEM, the shared secrets are the output of the traditional key exchange (Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static defined in Section 4.6 of {{?RFC9370}} for JOSE and Key Agreement with Ephemeral-Static (ES) Diffie-Hellman (DH) defined in Section 6.3.1 of {{?RFC9053}} for COSE) and PQC KEM. The KEM combiner function is defined in Section 3 of {{?I-D.ounsworth-cfrg-kem-combiners}}. The KDF and Hash functions will be KMAC and SHA3 and the counter will be initialized with a value of 0x00000001 (Section 4 of {{?I-D.ounsworth-cfrg-kem-combiners}}). The KMAC functions used with the PQ/T hybrid algorithms are specified in the table below:
 
             +==============+=========+=========+
             | PQ/T hybrid algorithm  | KDF     |
@@ -186,7 +186,6 @@ Kyber offers several parameter sets with varying levels of security and performa
 
 The parameter "kty" MUST be present and set to "OKP" defined in Section 2 of {{?RFC7518}} for expressing the cryptographic keys for PQ/T Hybrid KEM, the following rules apply:
 
-* The parameter "kty" MUST be present and set to "OKP" (Section 2 of {{?RFC7518}}).
 * The parameter "alg" MUST be specified, and its value MUST be one of the values specified in the table below:
   
               +============================+===================================+
