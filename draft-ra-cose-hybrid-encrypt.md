@@ -147,9 +147,9 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
 
    KMAC is defined in NIST SP 800-185 {{SP800-185}}.  The KMAC(K, X, L, S) parameters are instantiated as follows:
 
-   *  K: context-specific string. In case of JOSE, the context-specific string will be set to concat("JOSE_Post_Quantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). In case of
-      COSE, the context-specific string will be set to concat("COSE_Post_Quantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). For example, 
-      concat("JOSE_Post_Quantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_Post_Quantum_Traditional_Hybrid_x25519-ES_kyber512".
+   *  K: context-specific string. In case of JOSE, the context-specific string will be set to concat("JOSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). In case of
+      COSE, the context-specific string will be set to concat("COSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). For example, 
+      concat("JOSE_PostQuantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_Post_Quantum_Traditional_Hybrid_x25519-ES_kyber512".
 
    *  X: concat(0x00000001, k_1, ... , k_n, fixedInfo). The fixedInfo parameter is a fixed-format string containing context-specific information.
 
@@ -162,7 +162,7 @@ in Section 4.6.2 of {{?RFC7518}}. In case of COSE, the fixedInfo parameter will 
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
 
-      ss = KMAC256("COSE_Post_Quantum_Traditional_Hybrid_X25519-ES_kyber512", "0x00000001 || 
+      ss = KMAC256("COSE_PostQuantum_Traditional_Hybrid_X25519-ES_kyber512", "0x00000001 || 
                     HKDF-256(DH-Shared-Secret, salt, context) || 
                     ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 256, "KDF")  
 
