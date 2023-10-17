@@ -1,6 +1,6 @@
-# Hybrid key exchange in JOSE
+# Hybrid key exchange in COSE
 
-This is the working area for the IETF [jose](https://datatracker.ietf.org/wg/jose/documents/) Internet-Draft.
+This is the working area for the IETF [cose](https://datatracker.ietf.org/wg/cose/documents/) Internet-Draft.
 
 
 ## Contributing
