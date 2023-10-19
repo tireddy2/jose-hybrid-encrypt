@@ -133,23 +133,23 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
             +==============+=========+=========+
             | PQ/T hybrid algorithm  | KDF     |
             +========================+=========+
-            | x25519-ES_kyber512     | KMAC128 |
+            | x25519-ES_kyber512     | KMAC256 |
             +------------------------+---------+
             | secp384r1-ES_kyber768  | KMAC256 |
             +------------------------+---------+
             | x25519-ES_kyber768     | KMAC256 |
             +-----------------------+----------+
-            | secp256r1-ES_kyber512 |  KMAC128 |
+            | secp256r1-ES_kyber512 |  KMAC256 |
             +------------------------+---------+
 
                              Table 1 
 
 
-   KMAC is defined in NIST SP 800-185 {{SP800-185}}.  The KMAC(K, X, L, S) parameters are instantiated as follows:
+   KMAC is defined in NIST SP 800-56Cr2 [SP800-56C].  The KMAC(K, X, L, S) parameters are instantiated as follows:
 
-   *  K: context-specific string. In case of JOSE, the context-specific string will be set to concat("JOSE_Post_Quantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). In case of
-      COSE, the context-specific string will be set to concat("COSE_Post_Quantum_Traditional_Hybrid", "-", Name of the PQ/T hybrid algorithm). For example, 
-      concat("JOSE_Post_Quantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_Post_Quantum_Traditional_Hybrid_x25519-ES_kyber512".
+   *  K: context-specific string. In case of JOSE, the context-specific string will be set to concat("JOSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). In case of
+      COSE, the context-specific string will be set to concat("COSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). For example, 
+      concat("JOSE_PostQuantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_PostQuantum_Traditional_Hybrid_x25519-ES_kyber512". Note: The suggested maximum byte length of K (salt) can be 132 bytes, and the salt can be a multiple of 132 bytes, excluding an additional 4 bytes for length encoding, as discussed in Table 3 of [SP800-56C]. However, in this document, K is of variable length. The size of "K" will change based on the PQ/T hybrid algorithm. For instance, "x25519-ES_kyber512" and "secp256r1-ES_kyber512" will result in two different sizes of K after the concat operation. A shorter key K will be padded by appending an all-zero bit string to obtain a 132-byte output.
 
    *  X: concat(0x00000001, k_1, ... , k_n, fixedInfo). The fixedInfo parameter is a fixed-format string containing context-specific information.
 
@@ -162,9 +162,9 @@ in Section 4.6.2 of {{?RFC7518}}. In case of COSE, the fixedInfo parameter will 
 
 The KEM combiner instantiation of the first entry of Table 1 would be:
 
-      ss = KMAC128("COSE_Post_Quantum_Traditional_Hybrid_X25519-ES_kyber512", "0x00000001 || 
+      ss = KMAC256("COSE_PostQuantum_Traditional_Hybrid_X25519-ES_kyber512", "0x00000001 || 
                     HKDF-256(DH-Shared-Secret, salt, context) || 
-                    ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 128, "KDF")  
+                    ct_1 || rlen(ct_1) || ss_1 || rlen(ss_1) || context" , 256, "KDF")  
 
 Where ss_1 is shared secret and its corresponding ciphertext ct_1 generated from kemEncaps(pk). If ss_1 or ct_1 are not guaranteed to have constant length, rlen encoded length is appended when concatenating as discussed in Section 3.2 of {{?I-D.ounsworth-cfrg-kem-combiners}}.
 
