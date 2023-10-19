@@ -149,8 +149,7 @@ The specification uses the KEM combiner defined in {{?I-D.ounsworth-cfrg-kem-com
 
    *  K: context-specific string. In case of JOSE, the context-specific string will be set to concat("JOSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). In case of
       COSE, the context-specific string will be set to concat("COSE_PostQuantum_Traditional_Hybrid", "_", Name of the PQ/T hybrid algorithm). For example, 
-      concat("JOSE_PostQuantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_Post_Quantum_Traditional_Hybrid_x25519-ES_kyber512". 
-      Note: The maximum byte length of salt can be 132 bytes as discussed in Table 3 of [SP800-56C] but in our draft K is variable-length. The size of "K" will change based on the PQ/T hybrid algorithm. For instance, "x25519-ES_kyber512" and "secp256r1-ES_kyber512" will result in two different sizes of K after the concat operation. The application can either provide no salt and the K becomes the default salt or by padding the resulting string with appending an all-zero bit string to get a 132 byte output.
+      concat("JOSE_PostQuantum_Traditional_Hybrid", "_", "x25519-ES_kyber512") = "JOSE_Post_Quantum_Traditional_Hybrid_x25519-ES_kyber512". Note: The maximum byte length of salt can be 132 bytes as discussed in Table 3 of [SP800-56C] but in our draft K is variable-length. The size of "K" will change based on the PQ/T hybrid algorithm. For instance, "x25519-ES_kyber512" and "secp256r1-ES_kyber512" will result in two different sizes of K after the concat operation. The application can either provide no salt and the K becomes the default salt or by padding the resulting string with appending an all-zero bit string to get a 132 byte output.
 
    *  X: concat(0x00000001, k_1, ... , k_n, fixedInfo). The fixedInfo parameter is a fixed-format string containing context-specific information.
 
