@@ -828,4 +828,4 @@ The following has to be added to the "COSE Algorithms" registry:
 # Acknowledgments
 {: numbered="false"}
 
-Thanks to Mike Ounsworth for the discussion and comments.
+Thanks to Ilari Liusvaara and Mike Ounsworth for the discussion and comments.
